@@ -7,8 +7,11 @@ public class CharacterMovement : MonoBehaviour
     private Rigidbody _playerRb;
 
     //Would take in a charater unique variables
-    private float _walkSpeed = 8; 
+    [SerializeField]
+    private float _walkSpeed = 8;
+    [SerializeField]
     private float _jumpForce = 20;
+    [SerializeField]
     private float _jumpAngleMod = 0.25f;
 
     //This variable changes depending on what the input script reads
@@ -24,6 +27,9 @@ public class CharacterMovement : MonoBehaviour
         _playerRb = GetComponent<Rigidbody>();
     }
 
+    /// <summary>
+    /// Takes in a horizontal movement input and translates in the desired direction
+    /// </summary>
     public void CharacterMove()
     {
         //_moveDirection is a +/-1 that determines whether the player is going left or right
@@ -33,7 +39,9 @@ public class CharacterMovement : MonoBehaviour
         transform.Translate(_horizontalTranslation, 0, 0);
     }
 
-    //Input script calls this function once since it is a single application of force
+    /// <summary>
+    /// Called when the player jumps and applies a single instance of force.
+    /// </summary>
     public void CharacterJump()
     {
         if(_moveDirection == 0)
