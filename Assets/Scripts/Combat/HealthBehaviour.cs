@@ -78,7 +78,7 @@ public class HealthBehaviour : MonoBehaviour
         if (Health < 0)
             _health = 0;
 
-        _onTakeDamage.Invoke(gameObject);
+        _onTakeDamage.Invoke(attacker);
 
         return Health;
     }
