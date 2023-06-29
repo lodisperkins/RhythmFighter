@@ -65,6 +65,7 @@ namespace Input
     public class InputBehaviour : MonoBehaviour
     {
         private PlayerActions _playerControls;
+        private CharacterMovement _characterMovement;
         [Tooltip("The number associated with the player. \n  1 - Player 1 \n 2 - Player 2")]
         [SerializeField]
         private int _playerID;
@@ -105,10 +106,10 @@ namespace Input
         void Awake()
         {
             _stateMachine = GetComponent<CharacterStateMachineBehaviour>();
+            _characterMovement = GetComponent<CharacterMovement>();
             _playerControls = new PlayerActions();
 
             _playerControls.Character.Move.performed += BufferMovement;
-            _playerControls.Character.Jump.performed += BufferJump;
             _playerControls.Character.LightAttack.performed += BufferLightAttack;
         }
 
@@ -120,21 +121,12 @@ namespace Input
         private void OnDisable()
         {
             _playerControls.Disable();
-            int test = 1;
         }
 
         private void BufferMovement(InputAction.CallbackContext context)
         {
             Vector2 direction = context.ReadValue<Vector2>();
-
-            //TO DO: Add movement call
-            _bufferedAction = new BufferedInput(() => Debug.Log("Movement input recieved." + direction), () => _stateMachine.CanMove, 60);
-        }
-
-        private void BufferJump(InputAction.CallbackContext context)
-        {
-            //TO DO: Add jump call
-            _bufferedAction = new BufferedInput(() => Debug.Log("Jump input recieved."), () => _canJump, 60);
+            _bufferedAction = new BufferedInput(() => _characterMovement.MoveVector = direction, () => _stateMachine.CanJump, 60);
         }
 
         private void BufferLightAttack(InputAction.CallbackContext context)
