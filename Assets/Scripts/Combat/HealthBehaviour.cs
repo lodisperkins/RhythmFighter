@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -78,7 +79,7 @@ public class HealthBehaviour : MonoBehaviour
         if (Health < 0)
             _health = 0;
 
-        _onTakeDamage.Invoke(gameObject);
+        _onTakeDamage.Invoke(attacker);
 
         return Health;
     }
@@ -125,3 +126,30 @@ public class HealthBehaviour : MonoBehaviour
 
     }
 }
+/// <summary>
+/// Editor script to test attacks
+/// </summary>
+#if UNITY_EDITOR
+
+[CustomEditor(typeof(HealthBehaviour))]
+class HealthEditor : Editor
+{
+    private HealthBehaviour _owner;
+    private float _damage;
+
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+
+        _owner = (HealthBehaviour)target;
+
+        _damage = EditorGUILayout.FloatField("Damage", _damage);
+
+        if (GUILayout.Button("Test Attack"))
+        {
+            _owner.TakeDamage(null, _damage);
+        }
+    }
+}
+
+#endif

@@ -65,6 +65,7 @@ namespace Input
     public class InputBehaviour : MonoBehaviour
     {
         private PlayerActions _playerControls;
+        private CharacterMovement _characterMovement;
         [Tooltip("The number associated with the player. \n  1 - Player 1 \n 2 - Player 2")]
         [SerializeField]
         private int _playerID;
@@ -72,6 +73,11 @@ namespace Input
         private bool _canJump;
         [SerializeField]
         private bool _canMove;
+        [SerializeField]
+        private bool _canAttack;
+
+        private CharacterStateMachineBehaviour _stateMachine;
+
         private BufferedInput _bufferedAction;
         private InputDevice[] _devices;
 
@@ -99,10 +105,12 @@ namespace Input
         // Start is called before the first frame update
         void Awake()
         {
+            _stateMachine = GetComponent<CharacterStateMachineBehaviour>();
+            _characterMovement = GetComponent<CharacterMovement>();
             _playerControls = new PlayerActions();
 
             _playerControls.Character.Move.performed += BufferMovement;
-            _playerControls.Character.Jump.performed += BufferJump;
+            _playerControls.Character.LightAttack.performed += BufferLightAttack;
         }
 
         private void OnEnable()
@@ -117,14 +125,13 @@ namespace Input
 
         private void BufferMovement(InputAction.CallbackContext context)
         {
-            //TO DO: Add movement call
-            _bufferedAction = new BufferedInput(() => Debug.Log("Movement input recieved."), () => _canMove, 60);
+            Vector2 direction = context.ReadValue<Vector2>();
+            _bufferedAction = new BufferedInput(() => _characterMovement.MoveVector = direction, () => _stateMachine.CanJump, 60);
         }
 
-        private void BufferJump(InputAction.CallbackContext context)
+        private void BufferLightAttack(InputAction.CallbackContext context)
         {
-            //TO DO: Add jump call
-            _bufferedAction = new BufferedInput(() => Debug.Log("Jump input recieved."), () => _canJump, 60);
+            _bufferedAction = new BufferedInput(() => Debug.Log("Light Attack input recieved."), () => _stateMachine.CanAttack, 60);
         }
 
         // Update is called once per frame
