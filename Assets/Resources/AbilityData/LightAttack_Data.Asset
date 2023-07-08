@@ -12,17 +12,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9aa77ad42a5b144881b7edea9fd26bd, type: 3}
   m_Name: LightAttack_Data
   m_EditorClassIdentifier: 
-  AbilityName: Unassigned
+  AbilityName: Light Attack
   AbilityDescription: None
-  StartUpTime: 0
-  ActiveTime: 0
-  RecoverTime: 0
-  VisualPrefab: {fileID: 0}
+  StartUpTime: 0.2
+  ActiveTime: 0.1
+  RecoverTime: 0.3
+  VisualPrefab: {fileID: 3101517051713220308, guid: 831f959ab3e338741b0a83f10c71e22f, type: 3}
   StartSound: {fileID: 0}
   ActiveSound: {fileID: 0}
   DeactivateSound: {fileID: 0}
-  _colliderData: []
-  _customStats: []
+  _colliderData:
+  - Name: LightAttackCollider
+    DespawnAfterTimeLimit: 1
+    TimeActive: 0.1
+    DestroyOnHit: 0
+    IsMultiHit: 0
+    MultiHitWaitTime: 0
+    CollisionLayers:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    Damage: 10
+    SpawnEffect: {fileID: 0}
+    HitEffect: {fileID: 0}
+    SpawnSound: {fileID: 0}
+    HitSound: {fileID: 0}
+    DespawnSound: {fileID: 0}
+  _customStats:
+  - _name: Hitbox Offset
+    _value: 1
   UseAbilityTimingForAnimation: 0
-  TypeOfAnimation: 0
-  _customAnimation: {fileID: 0}
+  _animation: {fileID: 0}
