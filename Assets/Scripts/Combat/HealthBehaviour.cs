@@ -1,3 +1,4 @@
+using Combat;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -82,6 +83,18 @@ public class HealthBehaviour : MonoBehaviour
         _onTakeDamage.Invoke(attacker);
 
         return Health;
+    }
+
+    public virtual float TakeDamage(GameObject attacker, HitColliderData info)
+    {
+        float damageTaken = Health;
+
+        Health -= info.Damage;
+
+        damageTaken -= Health;
+
+        _onTakeDamage.Invoke(attacker);
+        return damageTaken;
     }
 
     /// <summary>

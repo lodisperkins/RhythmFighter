@@ -77,6 +77,7 @@ namespace Input
         private bool _canAttack;
 
         private CharacterStateMachineBehaviour _stateMachine;
+        private CombatBehaviour _combat;
 
         private BufferedInput _bufferedAction;
         private InputDevice[] _devices;
@@ -106,6 +107,7 @@ namespace Input
         void Awake()
         {
             _stateMachine = GetComponent<CharacterStateMachineBehaviour>();
+            _combat = GetComponent<CombatBehaviour>();
             _characterMovement = GetComponent<CharacterMovement>();
             _playerControls = new PlayerActions();
 
@@ -131,7 +133,7 @@ namespace Input
 
         private void BufferLightAttack(InputAction.CallbackContext context)
         {
-            _bufferedAction = new BufferedInput(() => Debug.Log("Light Attack input recieved."), () => _stateMachine.CanAttack, 60);
+            _bufferedAction = new BufferedInput(() => _combat?.UseAbility1(), () => true, 60);
         }
 
         // Update is called once per frame
