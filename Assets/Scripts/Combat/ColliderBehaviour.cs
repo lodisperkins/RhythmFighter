@@ -14,7 +14,7 @@ namespace Combat
     /// </summary>
     /// <param name="args"></param>
     public delegate void CollisionEvent(params object[] args);
-
+    
     public class ColliderBehaviour : MonoBehaviour
     {
         private Dictionary<GameObject, float> _collisions;

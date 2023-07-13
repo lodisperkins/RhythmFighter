@@ -29,6 +29,9 @@ public class Stat
 public class AbilityData_SO : ScriptableObject
 {
     public string AbilityName = "Unassigned";
+
+    public AbilityType TypeOfAbility;
+
     [TextArea]
     public string AbilityDescription = "None";
 

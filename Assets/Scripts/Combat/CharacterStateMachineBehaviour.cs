@@ -8,19 +8,19 @@ using UnityEngine.Events;
 public class CharacterStateMachineBehaviour : MonoBehaviour
 {
     private CharacterMovement _characterMovement;
-    private MoveSet _characterMoveSet;
-
+    private CombatBehaviour _characterCombatBehavior;
     private StateMachine _stateMachine;
-    private bool _canMove;
-    private bool _canAttack;
-    private bool _canJump;
+
+    //These variables are set upon entry of a state within the state machine
+    private bool _canMove = true;
+    private bool _canAttack = true;
+    private bool _canJump = true;
 
     //Temporary variables for testing.
-
     [SerializeField]
-    private bool _isIdle;
+    private bool _isIdle = true;
     [SerializeField]
-    private bool _isInHitStun;
+    private bool _isInHitStun = false;
 
     public string CurrentState { get => _stateMachine.CurrentState; }
     public bool CanMove { get => _canMove; private set => _canMove = value; }
@@ -31,25 +31,24 @@ public class CharacterStateMachineBehaviour : MonoBehaviour
     void Awake()
     {
         _characterMovement = GetComponent<CharacterMovement>();
-        _characterMoveSet = GetComponent<MoveSet>();
+        _characterCombatBehavior = GetComponent<CombatBehaviour>();
 
         //Cache refernce to attached state machine.
         _stateMachine = GetComponent<StateMachine>();
 
         //Initialize transition conditions.
-
         _stateMachine.SetTransitionConditionByLabel("Move", args => _characterMovement.IsMoving);
-        _stateMachine.SetTransitionConditionByLabel("Attack", args => _characterMoveSet.IsAttacking);
+        _stateMachine.SetTransitionConditionByLabel("Attack", args => _characterCombatBehavior.AbilityInUse);
         _stateMachine.SetTransitionConditionByLabel("Jump", args => _characterMovement.IsJumping);
 
         _stateMachine.SetTransitionCondition("Any-Idle", args => CheckIsIdle());
         _stateMachine.SetTransitionCondition("Any-HitStun", args => _isInHitStun);
-
     }
 
+    //This determines if the player is idle based on what are and aren't able to do
     private bool CheckIsIdle()
     {
-        if (_characterMovement.IsMoving == false && _characterMovement.IsJumping == false && _characterMoveSet.IsAttacking == false && _isInHitStun == false)
+        if (_characterMovement.IsMoving == false && _characterMovement.IsJumping == false && _characterCombatBehavior.AbilityInUse == false)
         {
             _isIdle = true;
             return _isIdle;
