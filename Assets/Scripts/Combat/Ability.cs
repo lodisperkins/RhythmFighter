@@ -27,6 +27,7 @@ namespace Combat
         private HealthBehaviour _ownerHealth;
 
         private CombatBehaviour _owner;
+        //private MoveSet _owner2;
         private AbilityData_SO _abilityData;
 
         private UnityEvent _onStart;

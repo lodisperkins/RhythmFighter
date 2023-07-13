@@ -66,6 +66,9 @@ namespace Input
     {
         private PlayerActions _playerControls;
         private CharacterMovement _characterMovement;
+        private CharacterStateMachineBehaviour _stateMachine;
+        private CombatBehaviour _combat;
+
         [Tooltip("The number associated with the player. \n  1 - Player 1 \n 2 - Player 2")]
         [SerializeField]
         private int _playerID;
@@ -75,9 +78,6 @@ namespace Input
         private bool _canMove;
         [SerializeField]
         private bool _canAttack;
-
-        private CharacterStateMachineBehaviour _stateMachine;
-        private CombatBehaviour _combat;
 
         private BufferedInput _bufferedAction;
         private InputDevice[] _devices;
@@ -109,10 +109,13 @@ namespace Input
             _stateMachine = GetComponent<CharacterStateMachineBehaviour>();
             _combat = GetComponent<CombatBehaviour>();
             _characterMovement = GetComponent<CharacterMovement>();
+            
             _playerControls = new PlayerActions();
 
             _playerControls.Character.Move.performed += BufferMovement;
             _playerControls.Character.LightAttack.performed += BufferLightAttack;
+            _playerControls.Character.HeavyAttack.performed += BufferHeavyAttack;
+            _playerControls.Character.SpecialAttack.performed += BufferSpecialAttack;
         }
 
         private void OnEnable()
@@ -128,15 +131,30 @@ namespace Input
         private void BufferMovement(InputAction.CallbackContext context)
         {
             Vector2 direction = context.ReadValue<Vector2>();
-            _bufferedAction = new BufferedInput(() => _characterMovement.MoveVector = direction, () => _stateMachine.CanJump, 60);
+            _bufferedAction = new BufferedInput(() => MovementUpdates(direction), () => true, 60);
         }
 
         private void BufferLightAttack(InputAction.CallbackContext context)
         {
-            _bufferedAction = new BufferedInput(() => _combat?.UseAbility1(), () => true, 60);
+            _bufferedAction = new BufferedInput(() => _combat.LightAttackUsed(), () => _stateMachine.CanAttack, 60);
         }
 
-        // Update is called once per frame
+        private void BufferHeavyAttack(InputAction.CallbackContext context)
+        {
+            _bufferedAction = new BufferedInput(() => _combat.HeavyAttackUsed(), () => _stateMachine.CanAttack, 60);
+        }
+
+        private void BufferSpecialAttack(InputAction.CallbackContext context)
+        {
+            _bufferedAction = new BufferedInput(() => _combat.SpecialAttackUsed(), () => _stateMachine.CanAttack, 60);
+        }
+
+        private void MovementUpdates(Vector2 direction)
+        {
+            _characterMovement.MoveVector = direction;
+            _combat.MoveVector = direction;
+        }
+
         void Update()
         {
             if (_bufferedAction?.HasAction() == true)
