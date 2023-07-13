@@ -7,7 +7,7 @@ public class CharacterMovement : MonoBehaviour
     private Rigidbody _playerRb;
     private Collider _playerCollider;
 
-    [SerializeField] 
+    [SerializeField]
     private LayerMask floorLayerMask;
     [SerializeField]
     private float _walkSpeed = 1;
@@ -15,14 +15,11 @@ public class CharacterMovement : MonoBehaviour
     private float _jumpForce = 1;
     [SerializeField]
     private float _jumpAngleMod = 0.25f;
-    [SerializeField]
-    private float _moveDirection;
-
 
     private bool _isMoving = false;
     private bool _isJumping = false;
     private bool _isGrounded = true;
-    public bool _holdingJump = false;
+    private bool _holdingJump = false;
 
     //Variables to be refferenced by the CharacterStateMachineBehaviour script
     public bool IsMoving
@@ -42,7 +39,6 @@ public class CharacterMovement : MonoBehaviour
         get { return _isGrounded; }
         private set { _isGrounded = value; }
     }
-
     public bool HoldingJump
     {
         get { return _holdingJump; }
@@ -55,11 +51,19 @@ public class CharacterMovement : MonoBehaviour
         get { return _moveVector; }
         set
         {
+            _moveVector = value;
             if (value.x != 0) {_isMoving = true; _moveDirection = Mathf.Sign(value.x); }
             else { _moveDirection = 0; _isMoving = false; }
 
-            if(value.y > 0) _holdingJump = true; else _holdingJump = false;
+            if(value.y > 0) { _holdingJump = true; }
+            else { _holdingJump = false; }
         }
+    }
+    public float _moveDirection;
+    public float MoveDirection
+    {
+        get { return _moveDirection; }
+        set { _moveDirection = value; }
     }
 
     void Awake()
@@ -78,7 +82,7 @@ public class CharacterMovement : MonoBehaviour
         if (_moveDirection != 0 && _isJumping == false) { _isMoving = true; }
         else _isMoving = false;
 
-        if(_isJumping == false)
+        if(_isGrounded == true)
         transform.Translate(_horizontalTranslation, 0, 0);
     }
 
@@ -104,10 +108,10 @@ public class CharacterMovement : MonoBehaviour
         float extraHeightTest = 0.025f;
         Color rayColor;
 
-        //In the future add landing lag
         if (Physics.Raycast(transform.position, -Vector3.up, _playerCollider.bounds.extents.y + extraHeightTest, floorLayerMask))
         {
             rayColor = Color.green;
+            if (_moveDirection != 0) { _isMoving = true; }
             _isJumping = false;
             _isGrounded = true;
         }
@@ -123,7 +127,8 @@ public class CharacterMovement : MonoBehaviour
     {
         CharacterMove();
         IsGroundedCheck();
-        if (_holdingJump == true && _isJumping == false)
+
+        if (_holdingJump && _isGrounded)
             CharacterJump();
     }
 }
