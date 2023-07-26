@@ -10,28 +10,44 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a9aa77ad42a5b144881b7edea9fd26bd, type: 3}
-  m_Name: LightAttack_Data
+  m_Name: HeavyNeutral_Data
   m_EditorClassIdentifier: 
-  AbilityName: Light Attack
+  AbilityName: HeavyNeutral
+  TypeOfAbility: 2
   AbilityDescription: None
-  StartUpTime: 0.2
-  ActiveTime: 0.1
-  RecoverTime: 0.3
-  VisualPrefab: {fileID: 3101517051713220308, guid: 831f959ab3e338741b0a83f10c71e22f, type: 3}
+  StartUpTime: 0.17
+  ActiveTime: 0.06
+  RecoverTime: 0.33
+  VisualPrefab: {fileID: 0}
   StartSound: {fileID: 0}
   ActiveSound: {fileID: 0}
   DeactivateSound: {fileID: 0}
   _colliderData:
-  - Name: LightAttackCollider
+  - Name: HeavyNeutralCollider1
     DespawnAfterTimeLimit: 1
-    TimeActive: 0.1
-    DestroyOnHit: 0
+    TimeActive: 0.01
+    DestroyOnHit: 1
     IsMultiHit: 0
     MultiHitWaitTime: 0
     CollisionLayers:
       serializedVersion: 2
-      m_Bits: 4294967295
-    Damage: 10
+      m_Bits: 1
+    Damage: 5
+    SpawnEffect: {fileID: 0}
+    HitEffect: {fileID: 0}
+    SpawnSound: {fileID: 0}
+    HitSound: {fileID: 0}
+    DespawnSound: {fileID: 0}
+  - Name: HeavyNeutralCollider2
+    DespawnAfterTimeLimit: 1
+    TimeActive: 0.01
+    DestroyOnHit: 1
+    IsMultiHit: 0
+    MultiHitWaitTime: 0
+    CollisionLayers:
+      serializedVersion: 2
+      m_Bits: 1
+    Damage: 7
     SpawnEffect: {fileID: 0}
     HitEffect: {fileID: 0}
     SpawnSound: {fileID: 0}
@@ -40,5 +56,7 @@ MonoBehaviour:
   _customStats:
   - _name: Hitbox Offset
     _value: 1
+  - _name: Hitbox Spawn Delay
+    _value: 0.02
   UseAbilityTimingForAnimation: 0
   _animation: {fileID: 0}

@@ -8,7 +8,7 @@ namespace Combat
     /// <summary>
     /// Enter ability description here
     /// </summary>
-    public class LightAttack : Ability
+    public class LightNeutral : Ability
     {
         private float _offset;
         private Material _ownerMaterial;
