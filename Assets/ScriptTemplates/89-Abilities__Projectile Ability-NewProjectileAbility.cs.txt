@@ -1,0 +1,26 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace Combat
+{
+
+    /// <summary>
+    /// Enter ability description here
+    /// </summary>
+    public class #SCRIPTNAME# : ProjectileAbility
+    {
+	    //Called when ability is created
+        protected override void OnInit(CombatBehaviour newOwner, AbilityData_SO data)
+        {
+			base.OnInit(newOwner, data);
+        }
+
+	    //Called when ability is used
+        protected override void OnActivate(params object[] args)
+        {
+            //The base activate func fires a single instance of the projectile when called
+            base.OnActivate(args);
+        }
+    }
+}

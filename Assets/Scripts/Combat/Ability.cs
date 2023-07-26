@@ -238,6 +238,7 @@ namespace Combat
 
             //Get a reference to the base types
             Type baseType = Type.GetType("Combat.Ability");
+            Type projectileType = Type.GetType("Combat.ProjectileAbility");
 
             //Check if there is already an ability data asset for this ability
             string[] results = AssetDatabase.FindAssets(_nameOfClass + "_Data", new[] { "Assets/Resources/AbilityData" });
@@ -250,6 +251,8 @@ namespace Combat
             AbilityData_SO newData = null;
             if (assetType.BaseType == baseType)
                 newData = ScriptableObject.CreateInstance<AbilityData_SO>();
+            else if (assetType.BaseType == projectileType)
+                newData = ScriptableObject.CreateInstance<ProjectileAbilityData_SO>();
 
             //If the instance was created successfully, create a new asset using the instance 
             if (newData != null)
