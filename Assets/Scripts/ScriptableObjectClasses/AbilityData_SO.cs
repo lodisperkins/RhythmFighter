@@ -59,7 +59,7 @@ public class AbilityData_SO : ScriptableObject
     private HitColliderData[] _colliderData;
     [Tooltip("Any additional stats this ability needs to keep track of.")]
     [SerializeField]
-    private Stat[] _customStats;
+    protected Stat[] _customStats;
 
     [Header("Animation Options")]
     [Tooltip("If true, the animation will change speed to match the start, active, and recover times.")]
