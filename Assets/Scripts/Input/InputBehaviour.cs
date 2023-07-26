@@ -78,7 +78,7 @@ namespace Input
         private bool _canMove;
         [SerializeField]
         private bool _canAttack;
-
+        private Vector2 _attackDirection;
         private BufferedInput _bufferedAction;
         private InputDevice[] _devices;
 
@@ -131,28 +131,44 @@ namespace Input
         private void BufferMovement(InputAction.CallbackContext context)
         {
             Vector2 direction = context.ReadValue<Vector2>();
+            _attackDirection = direction;
             _bufferedAction = new BufferedInput(() => MovementUpdates(direction), () => true, 60);
         }
 
         private void BufferLightAttack(InputAction.CallbackContext context)
         {
-            _bufferedAction = new BufferedInput(() => _combat.LightAttackUsed(), () => _stateMachine.CanAttack, 60);
+            AbilityType type = AbilityType.LightNeutral;
+
+            if (_attackDirection == Vector2.right)
+                type = AbilityType.LightForward;
+
+            _bufferedAction = new BufferedInput(() => _combat.UseAbility(type), () => _stateMachine.CanAttack, 60);
         }
 
         private void BufferHeavyAttack(InputAction.CallbackContext context)
         {
-            _bufferedAction = new BufferedInput(() => _combat.HeavyAttackUsed(), () => _stateMachine.CanAttack, 60);
+            AbilityType type = AbilityType.HeavyNeutral;
+
+            if (_attackDirection == Vector2.right)
+                type = AbilityType.HeavyForward;
+
+            _bufferedAction = new BufferedInput(() => _combat.UseAbility(type), () => _stateMachine.CanAttack, 60);
         }
 
         private void BufferSpecialAttack(InputAction.CallbackContext context)
         {
-            _bufferedAction = new BufferedInput(() => _combat.SpecialAttackUsed(), () => _stateMachine.CanAttack, 60);
+            AbilityType type = AbilityType.SpecialNeutral;
+
+            if (_attackDirection == Vector2.right)
+                type = AbilityType.SpecialForward;
+
+            _bufferedAction = new BufferedInput(() => _combat.UseAbility(type), () => _stateMachine.CanAttack, 60);
         }
 
         private void MovementUpdates(Vector2 direction)
         {
+            _characterMovement.MoveDirection = direction.x;
             _characterMovement.MoveVector = direction;
-            _combat.MoveVector = direction;
         }
 
         void Update()
