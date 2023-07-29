@@ -57,7 +57,7 @@ public class PlayerHUD : MonoBehaviour
         }
         else
         {
-            _player1HealthPercentage = _player2HealthBehavior.Health / _player2HealthBehavior.MaxHealth;
+            _player2HealthPercentage = _player2HealthBehavior.Health / _player2HealthBehavior.MaxHealth;
             _player2HealthSlider.value = _player2HealthPercentage;
             _player2Fill.color = _sliderGradient.Evaluate(_player2HealthSlider.value);
         }
@@ -67,8 +67,6 @@ public class PlayerHUD : MonoBehaviour
     {
         _roundStartTime = Time.time;
         _remainingRoundTime = _maxRoundTime;
-
-        //transform.DOScale(_targetScale, _scaleDuration).SetLoops(-1, LoopType.Yoyo).onComplete += () => _onResizeComplete?.Invoke();
     }
 
     void Update()
