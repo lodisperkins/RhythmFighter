@@ -83,7 +83,7 @@ public class CharacterMovement : MonoBehaviour
         else _isMoving = false;
 
         if(_isGrounded == true)
-        transform.Translate(_horizontalTranslation, 0, 0);
+        transform.Translate(0, 0, _horizontalTranslation);
     }
 
     /// <summary>
@@ -99,7 +99,7 @@ public class CharacterMovement : MonoBehaviour
         else
         {
             _playerRb.velocity = new Vector3();
-            _playerRb.AddForce(new Vector2(_moveDirection * _jumpAngleMod, 1) * _jumpForce, ForceMode.Impulse);
+            _playerRb.AddForce(new Vector3(0, 1, _moveDirection * _jumpAngleMod) * _jumpForce, ForceMode.Impulse);
         }
     }
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class HealthBehaviour : MonoBehaviour
 {
@@ -128,6 +129,7 @@ public class HealthBehaviour : MonoBehaviour
     // Update is called once per frame
     public virtual void Update()
     {
+
         //Death check
         if (IsAlive && Health <= 0)
             _onDeath?.Invoke();

@@ -109,7 +109,7 @@ namespace Input
             _stateMachine = GetComponent<CharacterStateMachineBehaviour>();
             _combat = GetComponent<CombatBehaviour>();
             _characterMovement = GetComponent<CharacterMovement>();
-            
+
             _playerControls = new PlayerActions();
 
             _playerControls.Character.Move.performed += BufferMovement;
