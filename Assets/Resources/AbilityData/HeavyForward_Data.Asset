@@ -33,6 +33,7 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 1
     Damage: 10
+    HitStunTime: 2
     KnockBackForce: 10
     LaunchAngle: 45
     ChangeAngleBasedOnFacing: 1
