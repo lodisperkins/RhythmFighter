@@ -139,7 +139,7 @@ namespace Input
         {
             AbilityType type = AbilityType.LightNeutral;
 
-            if (_attackDirection == Vector2.right * transform.right.x / Mathf.Abs(transform.right.x))
+            if (_attackDirection == Vector2.right * transform.forward.x / Mathf.Abs(transform.forward.x))
                 type = AbilityType.LightForward;
 
             _bufferedAction = new BufferedInput(() => _combat.UseAbility(type), () => _stateMachine.CanAttack, 60);
@@ -149,7 +149,7 @@ namespace Input
         {
             AbilityType type = AbilityType.HeavyNeutral;
 
-            if (_attackDirection == Vector2.right * transform.right.x / Mathf.Abs(transform.right.x))
+            if (_attackDirection == Vector2.right * transform.forward.x / Mathf.Abs(transform.forward.x))
                 type = AbilityType.HeavyForward;
 
             _bufferedAction = new BufferedInput(() => _combat.UseAbility(type), () => _stateMachine.CanAttack, 60);
@@ -159,7 +159,7 @@ namespace Input
         {
             AbilityType type = AbilityType.SpecialNeutral;
 
-            if (_attackDirection == Vector2.right * transform.right.x / Mathf.Abs(transform.right.x))
+            if (_attackDirection == Vector2.right * transform.forward.x / Mathf.Abs(transform.forward.x))
                 type = AbilityType.SpecialForward;
 
             _bufferedAction = new BufferedInput(() => _combat.UseAbility(type), () => _stateMachine.CanAttack, 60);
@@ -167,7 +167,7 @@ namespace Input
 
         private void MovementUpdates(Vector2 direction)
         {
-            _characterMovement.MoveDirection = direction.x;
+            _characterMovement.MoveDirection = direction.x *= transform.forward.x;
             _characterMovement.MoveVector = direction;
         }
 

@@ -21,6 +21,9 @@ public class CharacterMovement : MonoBehaviour
     private bool _isGrounded = true;
     private bool _holdingJump = false;
 
+    private CharacterStateMachineBehaviour _stateMachine;
+
+
     //Variables to be refferenced by the CharacterStateMachineBehaviour script
     public bool IsMoving
     {
@@ -70,6 +73,7 @@ public class CharacterMovement : MonoBehaviour
     {
         _playerRb = GetComponent<Rigidbody>();
         _playerCollider = GetComponent<BoxCollider>();
+        _stateMachine = GetComponent<CharacterStateMachineBehaviour>();
     }
 
     /// <summary>
@@ -125,8 +129,12 @@ public class CharacterMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        CharacterMove();
         IsGroundedCheck();
+
+        if (_stateMachine.CurrentState == "HitStun")
+            return;
+
+        CharacterMove();
 
         if (_holdingJump && _isGrounded)
             CharacterJump();

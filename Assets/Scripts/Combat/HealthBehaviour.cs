@@ -1,4 +1,5 @@
 using Combat;
+using DelayedActions;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -26,6 +27,12 @@ public class HealthBehaviour : MonoBehaviour
     private UnityEvent _onDeath;
     [SerializeField]
     private UnityEvent<GameObject> _onTakeDamage;
+    private Rigidbody _rigidBody;
+    private bool _inHitStun;
+    private TimedAction _hitStunRoutine;
+    private Material _attachedMaterial;
+    private Color _defaultColor;
+    private Color _hitStunColor = Color.grey;
 
     /// <summary>
     /// Gets whether or not this object's health is greater than 0.
@@ -60,6 +67,7 @@ public class HealthBehaviour : MonoBehaviour
     /// The maximum amount of damage this object can take or has taken.
     /// </summary>
     public float MaxHealth { get => _maxHealth; }
+    public bool InHitStun { get => _inHitStun; private set => _inHitStun = value; }
 
     protected virtual void Awake()
     {
@@ -67,6 +75,10 @@ public class HealthBehaviour : MonoBehaviour
             _health = _maxHealth;
         else
             _health = _startingHealth;
+
+        _rigidBody = GetComponent<Rigidbody>();
+        _attachedMaterial = GetComponent<MeshRenderer>().material;
+        _defaultColor = _attachedMaterial.color;
     }
 
     /// <summary>
@@ -86,6 +98,12 @@ public class HealthBehaviour : MonoBehaviour
         return Health;
     }
 
+    /// <summary>
+    /// Decrements the given value from the health and returns the current health value.
+    /// </summary>
+    /// <param name="attacker">The owner of the hit box that is dealing damage.</param>
+    /// <param name="info">The data for the collider. Needed to apply damage, hit stun and knockback.</param>
+    /// <returns></returns>
     public virtual float TakeDamage(GameObject attacker, HitColliderData info)
     {
         float damageTaken = Health;
@@ -93,9 +111,24 @@ public class HealthBehaviour : MonoBehaviour
         Health -= info.Damage;
 
         damageTaken -= Health;
+        ActivateHitStun(info.HitStunTime);
+
+        ApplyKnockBack(info.LaunchAngle, info.KnockBackForce);
 
         _onTakeDamage.Invoke(attacker);
         return damageTaken;
+    }
+
+    /// <summary>
+    /// Adds an impulse force to the object using its mass.
+    /// </summary>
+    /// <param name="launchAngle">The direction to apply a force in.</param>
+    /// <param name="force">The magnitude of the force vector that will be applied/</param>
+    public virtual void ApplyKnockBack(float launchAngle, float force)
+    {
+        Vector3 velocity = new Vector3(Mathf.Cos(launchAngle), Mathf.Sin(launchAngle), 0) * force;
+
+        _rigidBody.AddForce(velocity, ForceMode.Impulse);
     }
 
     /// <summary>
@@ -107,6 +140,24 @@ public class HealthBehaviour : MonoBehaviour
         _health = _startingHealth == -1 ? _maxHealth : _startingHealth;
     }
 
+    /// <summary>
+    /// Flags this object as being in hit stun briefly.
+    /// </summary>
+    /// <param name="time">the amount of time in seconds the object is in hit stun for.</param>
+    public virtual void ActivateHitStun(float time)
+    {
+        InHitStun = true;
+        _hitStunRoutine = CoroutineManager.Instance.StartNewTimedAction(args => InHitStun = false, TimeUnit.SCALEDTIME, time);
+    }
+
+    /// <summary>
+    /// Disables hit stun and stops the timer.
+    /// </summary>
+    public virtual void CancelHitStun()
+    {
+        CoroutineManager.Instance.StopAction(_hitStunRoutine);
+        InHitStun = false;
+    }
 
     /// <summary>
     /// Adds an action to the event that is called once when this object's health reaches zero.
@@ -139,6 +190,11 @@ public class HealthBehaviour : MonoBehaviour
             //destroy the object.
             Destroy(gameObject);
 
+        //Color code for testing purposes.
+        if (InHitStun)
+            _attachedMaterial.color = _hitStunColor;
+        else
+            _attachedMaterial.color = _defaultColor;
     }
 }
 /// <summary>

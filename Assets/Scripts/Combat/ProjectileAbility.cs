@@ -67,7 +67,7 @@ namespace Combat
             if (ActiveProjectiles.Count >= MaxInstances && MaxInstances != -1)
                 return;
 
-            ShotDirection = Owner.transform.right;
+            ShotDirection = Owner.transform.forward;
 
             HitColliderData data = ProjectileColliderData;
 

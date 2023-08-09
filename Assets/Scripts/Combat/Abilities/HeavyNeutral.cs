@@ -30,7 +30,7 @@ namespace Combat
 
         private void SpawnHitBox(int index)
         {
-            Vector3 spawnPosition = Owner.transform.position + Owner.transform.right * _offset;
+            Vector3 spawnPosition = Owner.transform.position + Owner.transform.forward * _offset;
             GameObject instance = MonoBehaviour.Instantiate(AbilityData.VisualPrefab, spawnPosition, AbilityData.VisualPrefab.transform.rotation);
             HitColliderBehaviour hitCollider = instance.AddComponent<HitColliderBehaviour>();
             hitCollider.ColliderInfo = AbilityData.GetCollliderInfo(0);
