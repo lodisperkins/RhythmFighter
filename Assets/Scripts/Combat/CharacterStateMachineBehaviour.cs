@@ -9,6 +9,7 @@ public class CharacterStateMachineBehaviour : MonoBehaviour
 {
     private CharacterMovement _characterMovement;
     private CombatBehaviour _characterCombatBehavior;
+    private HealthBehaviour _characterHealth;
     private StateMachine _stateMachine;
 
     //These variables are set upon entry of a state within the state machine
@@ -19,8 +20,6 @@ public class CharacterStateMachineBehaviour : MonoBehaviour
     //Temporary variables for testing.
     [SerializeField]
     private bool _isIdle = true;
-    [SerializeField]
-    private bool _isInHitStun = false;
 
     public string CurrentState { get => _stateMachine.CurrentState; }
     public bool CanMove { get => _canMove; private set => _canMove = value; }
@@ -32,6 +31,7 @@ public class CharacterStateMachineBehaviour : MonoBehaviour
     {
         _characterMovement = GetComponent<CharacterMovement>();
         _characterCombatBehavior = GetComponent<CombatBehaviour>();
+        _characterHealth = GetComponent<HealthBehaviour>();
 
         //Cache refernce to attached state machine.
         _stateMachine = GetComponent<StateMachine>();
@@ -42,13 +42,15 @@ public class CharacterStateMachineBehaviour : MonoBehaviour
         _stateMachine.SetTransitionConditionByLabel("Jump", args => _characterMovement.IsJumping);
 
         _stateMachine.SetTransitionCondition("Any-Idle", args => CheckIsIdle());
-        _stateMachine.SetTransitionCondition("Any-HitStun", args => _isInHitStun);
+        _stateMachine.SetTransitionCondition("Any-HitStun", args => _characterHealth.InHitStun);
     }
 
     //This determines if the player is idle based on what are and aren't able to do
     private bool CheckIsIdle()
     {
-        if (_characterMovement.IsMoving == false && _characterMovement.IsJumping == false && _characterCombatBehavior.AbilityInUse == false)
+        if (_characterMovement.IsMoving == false && _characterMovement.IsJumping == false
+            && _characterCombatBehavior.AbilityInUse == false
+            && _characterHealth.InHitStun == false)
         {
             _isIdle = true;
             return _isIdle;

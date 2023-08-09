@@ -30,6 +30,14 @@ namespace Combat
         public LayerMask CollisionLayers;
         [Tooltip("The amount of health this collider will try to decrement from the receiver.")]
         public float Damage;
+        [Tooltip("The amount of time the opponent will be immobile after being hit.")]
+        public float HitStunTime;
+        [Tooltip("The strength of the force that will be applied to the opponent when hit.")]
+        public float KnockBackForce;
+        [Tooltip("The angle (in degrees) the opponent will be launched in once the attack lands.")]
+        public float LaunchAngle;
+        [Tooltip("Whether or not the angle the opponent is launched at changes based on the direction the character is looking.")]
+        public bool ChangeAngleBasedOnFacing = true;
 
         [Header("Collision Effects")]
         [Tooltip("The object that will be spawned when this hit collider is active. This is useful for spawning particle effects like muzzle flashes or charge effects.")]
@@ -152,8 +160,34 @@ namespace Combat
 
             HealthBehaviour damageScript = otherGameObject.GetComponent<HealthBehaviour>();
 
+            float angle = Mathf.Deg2Rad * ColliderInfo.LaunchAngle;
+            float defaultAngle = ColliderInfo.LaunchAngle;
+
+            //Calculates new angle if this object should change trajectory based on direction of hit
+            if (ColliderInfo.ChangeAngleBasedOnFacing)
+            {
+                //Find the direction this collider was going to apply force originally
+                Vector3 currentForceDirection = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0);
+
+                //Find a new direction based the alignment
+                float direction = Owner.transform.forward.x / Mathf.Abs(Owner.transform.forward.x);
+                currentForceDirection.x *= direction;
+
+                //Find the new angle based on the direction of the attack on the x axis
+                float dotProduct = Vector3.Dot(currentForceDirection, Vector3.right);
+                angle = Mathf.Acos(dotProduct);
+
+                //Find if the angle should be negative or positive
+                if (Vector3.Dot(currentForceDirection, Vector3.up) < 0)
+                    angle *= -1;
+            }
+
+            ColliderInfo.LaunchAngle = angle;
+
             if (damageScript)
                 damageScript.TakeDamage(Owner, ColliderInfo);
+
+            ColliderInfo.LaunchAngle = defaultAngle;
 
             ColliderInfo.OnHit?.Invoke(otherGameObject, otherCollider, other, this, damageScript);
 
