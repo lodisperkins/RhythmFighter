@@ -54,6 +54,9 @@ public class CombatBehaviour : MonoBehaviour
 
     public void UseAbility(AbilityType type, params object[] args)
     {
+        if (AbilityInUse)
+            return;
+
         _currentAbility = _abilities.Find(ability => ability.AbilityData.TypeOfAbility == type);
         _currentAbility.UseAbility(args);
     }

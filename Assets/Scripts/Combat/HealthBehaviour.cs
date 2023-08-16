@@ -33,6 +33,7 @@ public class HealthBehaviour : MonoBehaviour
     private Material _attachedMaterial;
     private Color _defaultColor;
     private Color _hitStunColor = Color.grey;
+    private bool _deathEventCalled;
 
     /// <summary>
     /// Gets whether or not this object's health is greater than 0.
@@ -54,7 +55,7 @@ public class HealthBehaviour : MonoBehaviour
         protected set
         {
             //Prevent damage if the object is dead
-            if (value <= _health && !IsAlive)
+            if (value < 0 && !IsAlive)
             {
                 return;
             }
@@ -78,7 +79,7 @@ public class HealthBehaviour : MonoBehaviour
 
         _rigidBody = GetComponent<Rigidbody>();
         _attachedMaterial = GetComponent<MeshRenderer>().material;
-        _defaultColor = _attachedMaterial.color;
+        _defaultColor = _attachedMaterial.color; 
     }
 
     /// <summary>
@@ -182,8 +183,11 @@ public class HealthBehaviour : MonoBehaviour
     {
 
         //Death check
-        if (IsAlive && Health <= 0)
+        if (!IsAlive && !_deathEventCalled)
+        {
             _onDeath?.Invoke();
+            _deathEventCalled = true;
+        }
 
         //If the object has died and it should be removed on death...
         if (!IsAlive && _destroyOnDeath)

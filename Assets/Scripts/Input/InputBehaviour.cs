@@ -132,7 +132,7 @@ namespace Input
         {
             Vector2 direction = context.ReadValue<Vector2>();
             _attackDirection = direction;
-            _bufferedAction = new BufferedInput(() => MovementUpdates(direction), () => true, 60);
+            _bufferedAction = new BufferedInput(() => MovementUpdates(direction), () => true, 0.15f);
         }
 
         private void BufferLightAttack(InputAction.CallbackContext context)
@@ -142,7 +142,7 @@ namespace Input
             if (_attackDirection == Vector2.right * transform.forward.x / Mathf.Abs(transform.forward.x))
                 type = AbilityType.LightForward;
 
-            _bufferedAction = new BufferedInput(() => _combat.UseAbility(type), () => _stateMachine.CanAttack, 60);
+            _bufferedAction = new BufferedInput(() => _combat.UseAbility(type), () => _stateMachine.CanAttack, 0.15f);
         }
 
         private void BufferHeavyAttack(InputAction.CallbackContext context)
@@ -152,7 +152,7 @@ namespace Input
             if (_attackDirection == Vector2.right * transform.forward.x / Mathf.Abs(transform.forward.x))
                 type = AbilityType.HeavyForward;
 
-            _bufferedAction = new BufferedInput(() => _combat.UseAbility(type), () => _stateMachine.CanAttack, 60);
+            _bufferedAction = new BufferedInput(() => _combat.UseAbility(type), () => _stateMachine.CanAttack,0.15f);
         }
 
         private void BufferSpecialAttack(InputAction.CallbackContext context)
@@ -162,12 +162,12 @@ namespace Input
             if (_attackDirection == Vector2.right * transform.forward.x / Mathf.Abs(transform.forward.x))
                 type = AbilityType.SpecialForward;
 
-            _bufferedAction = new BufferedInput(() => _combat.UseAbility(type), () => _stateMachine.CanAttack, 60);
+            _bufferedAction = new BufferedInput(() => _combat.UseAbility(type), () => _stateMachine.CanAttack, 0.15f);
         }
 
         private void MovementUpdates(Vector2 direction)
         {
-            _characterMovement.MoveDirection = direction.x *= transform.forward.x;
+            //_characterMovement.MoveDirection = direction.x *= transform.forward.x;
             _characterMovement.MoveVector = direction;
         }
 

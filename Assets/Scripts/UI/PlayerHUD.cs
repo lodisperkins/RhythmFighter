@@ -49,7 +49,7 @@ public class PlayerHUD : MonoBehaviour
 
     public void UpdatePlayerHealthUI(GameObject attacker)
     {
-        if(attacker != _player2HealthBehavior.gameObject)
+        if(attacker == _player2HealthBehavior.gameObject)
         {
             _player1HealthPercentage = _player1HealthBehavior.Health / _player1HealthBehavior.MaxHealth;
             _player1HealthSlider.value = _player1HealthPercentage;
