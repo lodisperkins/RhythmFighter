@@ -111,7 +111,6 @@ namespace Combat
             CurrentPhase = AbilityPhase.STARTUP;
             _onStart?.Invoke();
 
-            _currentTimer = CoroutineManager.Instance.StartNewTimedAction(ActivePhase, TimeUnit.SCALEDTIME, AbilityData.StartUpTime, args);
 
             for (int i = 0; i < _colliderInfo.Count; i++)
             {
@@ -122,7 +121,18 @@ namespace Combat
                 _colliderInfo[i] = data;
             }
 
+
+            if (!RhythmMeter.OnBeat)
+                _currentTimer = CoroutineManager.Instance.StartNewTimedAction(ActivePhase, TimeUnit.SCALEDTIME, AbilityData.StartUpTime, args);
+
             OnStart(args);
+
+            if (RhythmMeter.OnBeat)
+
+            {
+                Debug.Log("Activated on beat");
+                ActivePhase(args);
+            }
         }
 
         private void ActivePhase(params object[] args)
@@ -131,7 +141,7 @@ namespace Combat
             _onActivate?.Invoke();
             OnActivate(args);
 
-            _currentTimer = CoroutineManager.Instance.StartNewTimedAction(RecoverPhase, TimeUnit.SCALEDTIME, AbilityData.StartUpTime, args);
+            _currentTimer = CoroutineManager.Instance.StartNewTimedAction(RecoverPhase, TimeUnit.SCALEDTIME, AbilityData.ActiveTime, args);
         }
 
         private void RecoverPhase(params object[] args)
