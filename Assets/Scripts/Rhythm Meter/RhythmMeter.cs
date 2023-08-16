@@ -44,7 +44,7 @@ public class RhythmMeter : MonoBehaviour
             _onBeat = false;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         CheckThis();
     }

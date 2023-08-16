@@ -8,18 +8,30 @@ public class CharacterMovement : MonoBehaviour
     private Collider _playerCollider;
 
     [SerializeField]
+    private GameObject _facingChecker;
+    [SerializeField]
+    private Collider _playerFacingCollider;
+    [SerializeField]
     private LayerMask floorLayerMask;
     [SerializeField]
-    private float _walkSpeed = 1;
+    private float _walkSpeed = 0.1f;
     [SerializeField]
     private float _jumpForce = 1;
     [SerializeField]
     private float _jumpAngleMod = 0.25f;
+    [SerializeField]
+    private float _backwalkSpeed = 0.05f;
 
     private bool _isMoving = false;
     private bool _isJumping = false;
     private bool _isGrounded = true;
     private bool _holdingJump = false;
+    private bool _swapFacingOnLanding = false;
+
+    [SerializeField]
+    private bool _facingRight = true;
+
+    private float _horizontalTranslation;
 
     private CharacterStateMachineBehaviour _stateMachine;
 
@@ -55,8 +67,17 @@ public class CharacterMovement : MonoBehaviour
         set
         {
             _moveVector = value;
-            if (value.x != 0) {_isMoving = true; _moveDirection = Mathf.Sign(value.x); }
-            else { _moveDirection = 0; _isMoving = false; }
+            if (value.x != 0) 
+            {
+                _isMoving = true; 
+                _moveDirection = Mathf.Sign(value.x);
+
+                if (_facingRight && _moveDirection == 1 || !_facingRight && _moveDirection == -1)
+                    _horizontalTranslation = _moveDirection * _walkSpeed;
+                else
+                    _horizontalTranslation = _moveDirection * _backwalkSpeed;
+            }
+            else { _moveDirection = 0; _isMoving = false; _horizontalTranslation = 0; }
 
             if(value.y > 0) { _holdingJump = true; }
             else { _holdingJump = false; }
@@ -81,13 +102,16 @@ public class CharacterMovement : MonoBehaviour
     /// </summary>
     public void CharacterMove()
     {
-        float _horizontalTranslation = _moveDirection * _walkSpeed;
-
         if (_moveDirection != 0 && _isJumping == false) { _isMoving = true; }
         else _isMoving = false;
 
         if(_isGrounded == true)
-        transform.Translate(0, 0, _horizontalTranslation);
+        {
+            if(_facingRight)
+                transform.Translate(0, 0, _horizontalTranslation);
+            else
+                transform.Translate(0, 0, -_horizontalTranslation);
+        }
     }
 
     /// <summary>
@@ -103,7 +127,7 @@ public class CharacterMovement : MonoBehaviour
         else
         {
             _playerRb.velocity = new Vector3();
-            _playerRb.AddForce(new Vector3(0, 1, _moveDirection * _jumpAngleMod) * _jumpForce, ForceMode.Impulse);
+            _playerRb.AddForce(new Vector3(_moveDirection * _jumpAngleMod, 1, 0) * _jumpForce, ForceMode.Impulse);
         }
     }
 
@@ -118,12 +142,45 @@ public class CharacterMovement : MonoBehaviour
             if (_moveDirection != 0) { _isMoving = true; }
             _isJumping = false;
             _isGrounded = true;
+            if(_swapFacingOnLanding)
+                SwapFacing();
+
         }
         else
         {
             rayColor = Color.red;
             _isJumping = true;
             _isGrounded = false;
+        }
+    }
+
+    private void SwapFacing()
+    {
+        _facingRight = !_facingRight;
+        transform.Rotate(180, 0, 0);
+        //transform.rotation = Quaternion.Euler(0, 90, 0);
+
+        if (_facingRight && _moveDirection == 1 || !_facingRight && _moveDirection == -1)
+            _horizontalTranslation = _moveDirection * _walkSpeed;
+        else
+            _horizontalTranslation = _moveDirection * _backwalkSpeed;
+
+        _swapFacingOnLanding = false;
+    }
+
+    /// <summary>
+    /// This collider extends above and bellow, and can only collide with player facing collision (unique collider). It only serves the purpose of determining when to swap character facing
+    /// </summary>
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "FacingChecker" && other.gameObject != _facingChecker)
+        {
+            if (!IsGrounded)
+                _swapFacingOnLanding = true;
+            else
+            {
+                SwapFacing();
+            }
         }
     }
 
