@@ -15,7 +15,7 @@ MonoBehaviour:
   AbilityName: Light Attack
   TypeOfAbility: 0
   AbilityDescription: None
-  StartUpTime: 6.07
+  StartUpTime: 0.07
   ActiveTime: 0.05
   RecoverTime: 0.12
   VisualPrefab: {fileID: 3101517051713220308, guid: 831f959ab3e338741b0a83f10c71e22f, type: 3}
